@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Tic Tac Toe Dynamique</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="settings">
+    <h2>Paramètres</h2>
+    <label>
+      Taille de la grille (n): 
+      <input type="number" id="grid-size" min="3" max="10">
+    </label>
+    <label>
+      Alignements requis (k):
+      <input type="number" id="win-length" min="3" max="10" >
+    </label>
+    <label>
+      Symbole Joueur 1: 
+      <input type="text" id="player1-symbol" maxlength="1">
+    </label>
+    <label>
+      Symbole Joueur 2: 
+      <input type="text" id="player2-symbol" maxlength="1">
+    </label>
+    <button id="apply-settings">Appliquer</button>
+  </div>
+
+  <div class="game-info">
+    <span id="active-player">Joueur actif: X</span>
+    <span id="win-condition">Alignements requis: 3</span>
+  </div>
+
+  <div class="scoreboard">
+    <span id="score1">Joueur 1 (X): 0</span>
+    <span id="score2">Joueur 2 (O): 0</span>
+  </div>
+
+  <div id="game-grid"></div>
+
+  <div class="controls">
+    <button id="restart">Recommencer la partie</button>
+    <button id="reset-scores">Réinitialiser les scores</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
