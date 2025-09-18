@@ -1,9 +1,15 @@
 let player_1;
 let player_2;
-
 let currentPlayer;
+let winLengthNumber;
+const Score_1 = document.getElementById("score1")
+const Score_2 = document.getElementById("score2")
+const ScoreNumber1 = document.getElementById("score-number-1")
+const ScoreNumber2 = document.getElementById("score-number-2")
 
-document.getElementById("apply-settings").addEventListener("click", () => {
+
+
+let plyingSettings = document.getElementById("apply-settings").addEventListener("click", () => {
   const gridSize = document.getElementById("grid-size").value;
   const winLength = document.getElementById("win-length").value;
   const player1 = document.getElementById("player1-symbol").value || "X";
@@ -18,16 +24,24 @@ document.getElementById("apply-settings").addEventListener("click", () => {
 
   localStorage.setItem("TicTacToeSettings", JSON.stringify(settings));
 
-
   currentPlayer = player1;
   localStorage.setItem("currentPlayer", currentPlayer);
 
 
   localStorage.removeItem("gridMarks");
+  let Score = JSON.parse(localStorage.getItem("Score"))
+
+
+  Score_1.textContent = `Joueur 1 (${player1}):${Score.ScorePlayer1}`
+  Score_2.textContent = `Joueur 2 (${player2}):${Score.ScorePlayer2}`
+  
 
   renderGrid(settings.gridSize, player1, player2);
   restartGame();
+  const WinCondition = document.getElementById("win-condition");
   WinCondition.textContent = `Alignements requis: ${winLength}`;
+
+
 });
 
 var getSettings = JSON.parse(localStorage.getItem("TicTacToeSettings"));
@@ -53,7 +67,13 @@ function loadSettings() {
     player_2 = "O";
   }
 
-  renderGrid(getSettings ? getSettings.gridSize : 3,player_1, player_2);
+  const Score = JSON.parse(localStorage.getItem("Score"))
+
+  Score_1.textContent = `Joueur 1 (${player_1}):${Score.ScorePlayer1}`
+  Score_2.textContent = `Joueur 2 (${player_2}):${Score.ScorePlayer2}`
+  
+
+  renderGrid(getSettings ? getSettings.gridSize : 3,player_1, player_2, winLengthNumber);
   
 }
 
@@ -84,19 +104,26 @@ function renderGrid(size, pl1, pl2) {
         square.appendChild(mark);
 
         savedGrid[i] = currentPlayer;
+
+        document.getElementById("active-player").textContent =  `Joueur actif: ${currentPlayer}`;
+
         localStorage.setItem("gridMarks", JSON.stringify(savedGrid));
+        const ArrayMarks = JSON.parse(localStorage.getItem("gridMarks"));
+        const winLenghtNumber = JSON.parse(localStorage.getItem("TicTacToeSettings")).winLength || 3;
+        checkWin(ArrayMarks, winLenghtNumber);
+
 
         currentPlayer = currentPlayer === pl1 ? pl2 : pl1;
         localStorage.setItem("currentPlayer", currentPlayer);
 
-        document.getElementById("current-turn").textContent = `الدور الحالي: ${currentPlayer}`;
+        document.getElementById("active-player").textContent =  `Joueur actif: ${currentPlayer}`;
       }
     });
 
     grid.appendChild(square);
   }
 
-  document.getElementById("current-turn").textContent = `الدور الحالي: ${currentPlayer}`;
+  document.getElementById("active-player").textContent = `Joueur actif: ${currentPlayer}`;
 }
 
 
@@ -104,7 +131,30 @@ function renderGrid(size, pl1, pl2) {
 const restartButton = document.getElementById("restart");
 
 function restartGame(){
-   let saveGrid = localStorage.getItem("gridMarks");
+  const gridSize = document.getElementById("grid-size").value;
+  const winLength = document.getElementById("win-length").value;
+  const player1 = document.getElementById("player1-symbol").value || "X";
+  const player2 = document.getElementById("player2-symbol").value || "O";
+
+  const settings = {
+    gridSize,
+    winLength,
+    player1,
+    player2,
+  };
+
+  localStorage.setItem("TicTacToeSettings", JSON.stringify(settings));
+
+  currentPlayer = player1;
+  localStorage.setItem("currentPlayer", currentPlayer);
+
+
+  localStorage.removeItem("gridMarks");
+
+  renderGrid(settings.gridSize, player1, player2);
+  
+  // Restart Game
+  let saveGrid = localStorage.getItem("gridMarks");
   if(saveGrid){
     saveGrid = localStorage.removeItem("gridMarks");
     renderGrid(getSettings ? getSettings.gridSize : 3);
@@ -122,12 +172,11 @@ WinCondition.textContent = `Alignements requis: ${Score}`
 
 
 
+function checkWin(Marks, wln){
 
-
-
-
-
-
+    console.log(Marks, wln);
+    
+}
 
 
 window.addEventListener("load", loadSettings);
