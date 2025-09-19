@@ -4,6 +4,7 @@ let currentPlayer;
 
 const Score_1 = document.getElementById("score1");
 const Score_2 = document.getElementById("score2");
+const WinCondition = document.getElementById("win-condition");
 
 document.getElementById("apply-settings").addEventListener("click", () => {
   const gridSize = parseInt(document.getElementById("grid-size").value);
@@ -41,20 +42,19 @@ function loadSettings() {
     document.getElementById("win-length").value = getSettings.winLength;
     document.getElementById("player1-symbol").value = getSettings.player1;
     document.getElementById("player2-symbol").value = getSettings.player2;
+    player_1 = getSettings.player1;
+    player_2 = getSettings.player2;
+    WinCondition.textContent = `Alignements requis: ${getSettings.winLength}`;
   } else {
     document.getElementById("grid-size").value = 3;
     document.getElementById("win-length").value = 3;
     document.getElementById("player1-symbol").value = "X";
     document.getElementById("player2-symbol").value = "O";
-  }
-
-  if (getSettings) {
-    player_1 = getSettings.player1;
-    player_2 = getSettings.player2;
-  } else {
     player_1 = "X";
     player_2 = "O";
+    WinCondition.textContent = `Alignements requis: ${3}`;
   }
+
 
   if (!localStorage.getItem("Score")) {
     localStorage.setItem(
@@ -183,6 +183,7 @@ function checkWin(marks, size, winLength, player) {
 
 function updateScore(player) {
   let score = JSON.parse(localStorage.getItem("Score"));
+  console.log(score);
   score[player] += 1;
   localStorage.setItem("Score", JSON.stringify(score));
   updateScoreDisplay();
@@ -196,4 +197,22 @@ function updateScoreDisplay() {
   }
 }
 
+const resetButton = document.getElementById("reset-scores");
+
+resetButton.addEventListener("click", () => {
+   if (localStorage.getItem("Score")) {
+    localStorage.setItem(
+      "Score",
+      JSON.stringify({ [player_1]: 0, [player_2]: 0 })
+    );
+  }
+
+  Score_1.textContent = `Joueur 1 (${player_1}): ${0}`;
+  Score_2.textContent = `Joueur 2 (${player_2}): ${0}`;
+  restartGame();
+})
+
+
 window.addEventListener("load", loadSettings);
+
+
