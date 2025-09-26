@@ -95,7 +95,7 @@ function renderGrid(size, pl1, pl2) {
         localStorage.setItem("gridMarks", JSON.stringify(savedGrid));
 
         const winLength = parseInt(JSON.parse(localStorage.getItem("TicTacToeSettings")).winLength) || 3;
-        if (checkWin(savedGrid, size, winLength, currentPlayer)) {
+        if (checkWin(savedGrid,currentPlayer)) {
           alert(`Joueur ${currentPlayer} a gagné !`);
           updateScore(currentPlayer);
           localStorage.removeItem("gridMarks");
@@ -135,55 +135,32 @@ document.getElementById("restart").addEventListener("click", () => {
   restartGame();
 });
 
-function checkWin(marks, size, winLength, player) {
-  const getIndex = (row, col) => row * size + col;
+function checkWin(board, player) {
+  let size = board.length;
 
   for (let row = 0; row < size; row++) {
-    for (let col = 0; col <= size - winLength; col++) {
-      let ok = true;
-      for (let k = 0; k < winLength; k++) {
-        if (marks[getIndex(row, col + k)] !== player) ok = false;
-      }
-      if (ok) return true;
-    }
+    if (board[row].every(cell => cell === player)) return true;
   }
 
   for (let col = 0; col < size; col++) {
-    for (let row = 0; row <= size - winLength; row++) {
-      let ok = true;
-      for (let k = 0; k < winLength; k++) {
-        if (marks[getIndex(row + k, col)] !== player) ok = false;
-      }
-      if (ok) return true;
+    let win = true;
+    for (let row = 0; row < size; row++) {
+      if (board[row][col] !== player) win = false;
     }
+    if (win) return true;
   }
 
-  for (let row = 0; row <= size - winLength; row++) {
-    for (let col = 0; col <= size - winLength; col++) {
-      let ok = true;
-      for (let k = 0; k < winLength; k++) {
-        if (marks[getIndex(row + k, col + k)] !== player) ok = false;
-      }
-      if (ok) return true;
-    }
-  }
+  if (board.every((row, i) => row[i] === player)) return true;
 
-  for (let row = 0; row <= size - winLength; row++) {
-    for (let col = winLength - 1; col < size; col++) {
-      let ok = true;
-      for (let k = 0; k < winLength; k++) {
-        if (marks[getIndex(row + k, col - k)] !== player) ok = false;
-      }
-      if (ok) return true;
-    }
-  }
+  if (board.every((row, i) => row[size - 1 - i] === player)) return true;
 
   return false;
 }
 
+
+
 function updateScore(player) {
   let score = JSON.parse(localStorage.getItem("Score"));
-  console.log(score);
   score[player] += 1;
   localStorage.setItem("Score", JSON.stringify(score));
   updateScoreDisplay();
