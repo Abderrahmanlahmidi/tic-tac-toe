@@ -95,7 +95,7 @@ function renderGrid(size, pl1, pl2) {
         localStorage.setItem("gridMarks", JSON.stringify(savedGrid));
 
         const winLength = parseInt(JSON.parse(localStorage.getItem("TicTacToeSettings")).winLength) || 3;
-        if (checkWin(savedGrid,currentPlayer)) {
+        if (checkWin(savedGrid, winLength, currentPlayer)) {
           alert(`Joueur ${currentPlayer} a gagné !`);
           updateScore(currentPlayer);
           localStorage.removeItem("gridMarks");
@@ -135,28 +135,55 @@ document.getElementById("restart").addEventListener("click", () => {
   restartGame();
 });
 
-function checkWin(board, player) {
-  let size = board.length;
+function checkWin(board, winLength, player) {
+  const size = board.length;
+
 
   for (let row = 0; row < size; row++) {
-    if (board[row].every(cell => cell === player)) return true;
+    for (let col = 0; col <= size - winLength; col++) {
+      let win = true;
+      for (let k = 0; k < winLength; k++) {
+        if (board[row][col + k] !== player) win = false;
+      }
+      if (win) return true;
+    }
   }
+
 
   for (let col = 0; col < size; col++) {
-    let win = true;
-    for (let row = 0; row < size; row++) {
-      if (board[row][col] !== player) win = false;
+    for (let row = 0; row <= size - winLength; row++) {
+      let win = true;
+      for (let k = 0; k < winLength; k++) {
+        if (board[row + k][col] !== player) win = false;
+      }
+      if (win) return true;
     }
-    if (win) return true;
   }
 
-  if (board.every((row, i) => row[i] === player)) return true;
+  
+  for (let row = 0; row <= size - winLength; row++) {
+    for (let col = 0; col <= size - winLength; col++) {
+      let win = true;
+      for (let k = 0; k < winLength; k++) {
+        if (board[row + k][col + k] !== player) win = false;
+      }
+      if (win) return true;
+    }
+  }
 
-  if (board.every((row, i) => row[size - 1 - i] === player)) return true;
+  
+  for (let row = 0; row <= size - winLength; row++) {
+    for (let col = winLength - 1; col < size; col++) {
+      let win = true;
+      for (let k = 0; k < winLength; k++) {
+        if (board[row + k][col - k] !== player) win = false;
+      }
+      if (win) return true;
+    }
+  }
 
   return false;
 }
-
 
 
 function updateScore(player) {
